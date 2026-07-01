@@ -6,7 +6,7 @@ type MongooseConnection = {
 };
 
 declare global {
-  // eslint-disable-next-line no-var
+  
   var mongooseConnection: MongooseConnection | undefined;
 }
 

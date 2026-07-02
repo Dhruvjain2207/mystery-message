@@ -1,49 +1,28 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
+import path from 'path'
+import { auth } from '@/lib/auth'
+ 
 
 export async function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+    const {pathname}= request.nextUrl
+    const publicRoute=["/login","/verify","/message" ,"/register","/api/auth","/favicon.ico","/_next"]
+    if(publicRoute.some((path)=>pathname.startsWith(path))){
+        return NextResponse.next();
+    }
+    const session= await auth();
+    if(!session){
+        const loginUrl= new URL("/login",request.url)
+        loginUrl.searchParams.set("callbackUrl",request.url)
+        return NextResponse.redirect(loginUrl)
 
-  const publicRoutes = [
-    "/login",
-    "/register",
-    "/verify",
-    "/message",
-    "/api/auth",
-  ];
-
-  const isPublicRoute = publicRoutes.some((route) =>
-    pathname.startsWith(route)
-  );
-
-  const session = await auth();
-
-  // Redirect logged-in users away from auth pages
-  if (
-    session &&
-    (pathname.startsWith("/login") || pathname.startsWith("/register"))
-  ) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
-
-  // Allow public routes
-  if (isPublicRoute) {
+    }
     return NextResponse.next();
-  }
-
-  // Protect private routes
-  if (!session) {
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("callbackUrl", request.url);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  return NextResponse.next();
+    
+ 
 }
-
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)",
-    "/api/:path*",
-  ],
-};
+  matcher:[
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|gif|webp|svg|css|js)$).*)',
+  ]
+}

@@ -2,8 +2,58 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
+import { ClipLoader } from "react-spinners";
+import { useState } from "react";
+import axios from "axios";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function VerifyPage() {
+  const router=useRouter()
+  const searchParams=useSearchParams()
+  const email=searchParams.get("email")
+  const[otp,setOtp]=useState("")
+  const[loading,setLoading]=useState(false)
+
+  const handleVerifyForm=async(e:React.FormEvent<HTMLFormElement>)=>{
+    e.preventDefault()
+    if (!email) {
+  alert("Invalid verification link.");
+  return;
+}
+    
+    setLoading(true)
+    try {
+     const response = await axios.post(
+    "/api/verifyotp",
+    {
+      code: otp,
+    },
+    {
+      params: {
+        email,
+      },
+    }
+  );
+  alert(response.data.message)
+  router.replace("/login")
+    
+
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+    console.log(error.response);
+    console.log(error.response?.data);
+
+    alert(error.response?.data?.message ?? "No message received");
+  } else {
+    console.log(error);
+  }
+      
+    }
+    finally{
+      setLoading(false)
+    }
+
+  }
   return (
     <main className="min-h-screen bg-[#09090B] flex items-center justify-center px-6">
       <motion.div
@@ -24,13 +74,17 @@ export default function VerifyPage() {
             </p>
           </div>
 
-          <form className="space-y-6">
+          <form 
+          onSubmit={handleVerifyForm}
+          className="space-y-6">
             <div>
               <label className="mb-2 block text-sm font-medium text-zinc-300">
                 Verification Code
               </label>
 
               <motion.input
+                value={otp}
+                onChange={(e)=>setOtp(e.target.value)}
                 whileFocus={{ scale: 1.01 }}
                 type="text"
                 inputMode="numeric"
@@ -41,11 +95,24 @@ export default function VerifyPage() {
             </div>
 
             <motion.button
+              disabled={loading}
+              type="submit"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="w-full rounded-xl bg-indigo-600 py-3 font-semibold text-white transition hover:bg-indigo-500"
             >
-              Verify OTP
+               {loading ? (
+    <>
+      <ClipLoader
+        size={18}
+        color="#ffffff"
+        speedMultiplier={0.9}
+      />
+      Verifying...
+    </>
+  ) : (
+    "Verify OTP"
+  )}
             </motion.button>
           </form>
 

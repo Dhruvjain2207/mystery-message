@@ -4,9 +4,47 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { ClipLoader } from "react-spinners";
+import axios from "axios";
+import { signIn, useSession } from 'next-auth/react';
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router=useRouter()
+  const session=useSession()
   const [showPassword, setShowPassword] = useState(false);
+  const [loading,setLoading]=useState(false)
+  const [email,setEmail]=useState("")
+  const [password,setPassword]=useState("")
+  console.log(session.data?.user);
+
+
+  const handleSignInForm=async (e:React.FormEvent<HTMLFormElement>)=>{
+    e.preventDefault()
+    setLoading(true)
+    try {
+      const result= await signIn('credentials',{email,password,redirect:false})
+      
+      if(result?.error){
+                  alert("incorrect email or password");
+                  
+                  return
+                }
+                  alert("signIn sucessfully");
+                router.replace("/dashboard")
+                
+     
+      
+    } catch (error) {
+     console.error(error);
+  alert("Something went wrong.");
+      
+    }
+    finally{
+      setLoading(false)
+    }
+
+  }
 
   return (
     <main className="min-h-screen bg-[#09090B] flex items-center justify-center px-6">
@@ -28,7 +66,9 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <form className="space-y-5">
+          <form
+          onSubmit={handleSignInForm} 
+          className="space-y-5">
             {/* Email */}
             <div>
               <label className="mb-2 block text-sm font-medium text-zinc-300">
@@ -36,6 +76,8 @@ export default function LoginPage() {
               </label>
 
               <motion.input
+                value={email}
+                onChange={(e)=>setEmail(e.target.value)}
                 whileFocus={{ scale: 1.01 }}
                 type="email"
                 placeholder="you@example.com"
@@ -51,6 +93,8 @@ export default function LoginPage() {
 
               <div className="relative">
                 <motion.input
+                  value={password}
+                  onChange={(e)=>setPassword(e.target.value)}
                   whileFocus={{ scale: 1.01 }}
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter Your Password"
@@ -74,11 +118,24 @@ export default function LoginPage() {
           
 
             <motion.button
+              type="submit"
+              disabled={loading}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="w-full rounded-xl bg-indigo-600 py-3 font-semibold text-white transition hover:bg-indigo-500"
             >
-              Sign In
+              {loading ? (
+    <>
+      <ClipLoader
+        size={18}
+        color="#ffffff"
+        speedMultiplier={0.9}
+      />
+      Signing In...
+    </>
+  ) : (
+    "Sign In"
+  )}
             </motion.button>
           </form>
 

@@ -6,7 +6,7 @@ import { auth } from '@/lib/auth'
 
 export async function proxy(request: NextRequest) {
     const {pathname}= request.nextUrl
-    const publicRoute=["/login","/verify","/message" ,"/register","/api/auth","/favicon.ico","/_next"]
+    const publicRoute=["/login","/verify","/u" ,"/register","/api/auth","/favicon.ico","/_next"]
     if(publicRoute.some((path)=>pathname.startsWith(path))){
         return NextResponse.next();
     }

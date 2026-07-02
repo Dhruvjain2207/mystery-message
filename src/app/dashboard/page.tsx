@@ -1,11 +1,16 @@
+'use client'
 import Navbar from "@/components/Navbar";
+import { auth } from "@/lib/auth";
 import { Copy, MessageCircle, Send, Trash2 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import React from "react";
 
 function page() {
+  const session=useSession()
+  
   return (
     <main className="min-h-screen bg-zinc-950 text-white">
-      <Navbar />
+      <Navbar username={session.data?.user?.username ?? ""} />
 
       <section className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
         <div>
@@ -13,7 +18,7 @@ function page() {
             Dashboard
           </p>
           <h1 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">
-            Welcome back, Dhruv
+            Welcome back, {session?.data?.user?.username}
           </h1>
         </div>
 
@@ -25,7 +30,7 @@ function page() {
                 <span>Your Public Link</span>
               </div>
               <p className="mt-3 break-all text-zinc-300">
-                https://yourdomain.com/u/dhruv
+                 {`http://localhost:3000/u/${session?.data?.user?.username}`}
               </p>
             </div>
 

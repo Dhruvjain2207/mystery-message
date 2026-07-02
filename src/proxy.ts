@@ -17,6 +17,10 @@ export async function proxy(request: NextRequest) {
         return NextResponse.redirect(loginUrl)
 
     }
+    // If authenticated and trying to access "/"
+if (pathname === "/") {
+  return NextResponse.redirect(new URL("/dashboard", request.url));
+}
     return NextResponse.next();
     
  

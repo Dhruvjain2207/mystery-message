@@ -8,8 +8,9 @@ import {
   Sparkles,
   User,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import axios from 'axios';
 
 const suggestions = [
   'What is one thing you admire about me?',
@@ -31,6 +32,42 @@ export default function Page() {
   const username = decodeURIComponent(params.username as string);
   const [message, setMessage] = useState('');
   const maxLength = 500;
+  const [loading,setLoading]=useState(true)
+  const [userExist,setUserExist]=useState(false)
+
+  useEffect(()=>{
+    const validateusername=async()=>{
+      try {
+        const response=await axios.get("/api/usernameValidation",{
+          params:{username,
+          },
+        })
+        setUserExist(response.data.success);
+        
+      } catch (error) {
+        setUserExist(false)
+      }
+      finally{
+        setLoading(false)
+      }
+    }
+    validateusername();
+
+  },[username])
+  if(loading){
+    return (
+    <div className="flex min-h-screen items-center justify-center bg-zinc-950 text-white">
+      <h1 className="text-3xl font-bold">Loading...</h1>
+    </div>
+  );
+  }
+  if(!userExist){
+    return (
+    <div className="flex min-h-screen items-center justify-center bg-zinc-950 text-white">
+      <h1 className="text-3xl font-bold">User not found</h1>
+    </div>
+  );
+  }
 
   return (
     <main className="min-h-screen bg-zinc-950 px-4 py-10 text-white sm:px-6 lg:px-8">

@@ -3,10 +3,44 @@ import Navbar from "@/components/Navbar";
 import { auth } from "@/lib/auth";
 import { Copy, MessageCircle, Send, Trash2 } from "lucide-react";
 import { useSession } from "next-auth/react";
-import React from "react";
+import React, { useState } from "react";
 
 function page() {
   const session=useSession()
+  const shareurl=`http://localhost:3000/u/${session?.data?.user?.username}`
+  const [copied,setCopied]=useState(false)
+  const [shared,setShared]=useState(false)
+
+
+
+  const handleCopy=async()=>{
+    await navigator.clipboard.writeText(shareurl)
+    setCopied(true)
+    setTimeout(()=>{
+      setCopied(false)
+    },2000)
+
+  }
+
+  const handleShare=async()=>{
+    const messageLink=shareurl
+    if(navigator.share){
+      try{
+        await navigator.share({
+          title:"Mystery Message",
+          text:"Send me an anonymous message!",
+          url:messageLink
+        });
+      }catch(error){
+        console.log("Share Cancelled",error)
+
+      }
+    }
+    else{
+      await navigator.clipboard.writeText(messageLink);
+      alert("Link Copied")
+    }
+  }
   
   return (
     <main className="min-h-screen bg-zinc-950 text-white">
@@ -30,18 +64,22 @@ function page() {
                 <span>Your Public Link</span>
               </div>
               <p className="mt-3 break-all text-zinc-300">
-                 {`http://localhost:3000/u/${session?.data?.user?.username}`}
+                 {shareurl}
               </p>
             </div>
 
             <div className="flex gap-3">
-              <button className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-zinc-100 transition hover:bg-white/10">
+              <button
+              onClick={handleCopy}
+               className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-zinc-100 transition hover:bg-white/10">
                 <Copy className="h-4 w-4" />
-                Copy
+                {copied ? "Copied":"Copy"}
               </button>
-              <button className="inline-flex items-center gap-2 rounded-lg bg-cyan-300 px-4 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-cyan-200">
+              <button
+              onClick={handleShare} 
+              className="inline-flex items-center gap-2 rounded-lg bg-cyan-300 px-4 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-cyan-200">
                 <Send className="h-4 w-4" />
-                Share
+                {shared ? "Shared!":"Share"}
               </button>
             </div>
           </div>

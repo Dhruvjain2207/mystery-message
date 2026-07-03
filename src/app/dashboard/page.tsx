@@ -1,15 +1,72 @@
 'use client'
 import Navbar from "@/components/Navbar";
 import { auth } from "@/lib/auth";
+import axios from "axios";
 import { Copy, MessageCircle, Send, Trash2 } from "lucide-react";
 import { useSession } from "next-auth/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function page() {
+  interface Message {
+  _id: string;
+  content: string;
+  createdAt: string;
+}
+
+
   const session=useSession()
   const shareurl=`http://localhost:3000/u/${session?.data?.user?.username}`
   const [copied,setCopied]=useState(false)
   const [shared,setShared]=useState(false)
+  const [messages,setMessages]=useState<Message[]>([])
+  const [deleting,setDeleting]=useState(false)
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+
+ const handleDelete = async (messageId: string) => {
+  try {
+     setDeletingId(messageId);
+    setDeleting(true);
+
+    const response = await axios.delete("/api/delete-message", {
+      data: {
+        messageId,
+      },
+    });
+
+    
+
+    setMessages((prev) =>
+      prev.filter((message) => message._id !== messageId)
+    );
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      alert(error.response?.data?.message ?? "No message received");
+    } else {
+      console.error(error);
+      alert("Something went wrong");
+    }
+  } finally {
+    setDeleting(false);
+  }
+};
+
+  const fetchMessages=async()=>{
+    try {
+      const response=await axios.get("/api/get-messages");
+      if(response.data.success){
+        setMessages(response.data.messages)
+      }
+      
+    } catch (error:any) {
+      console.error("Error fetching messages:", error);
+      alert(error.response?.data?.message || "Failed to fetch messages");
+      
+    }
+  }
+  useEffect(()=>{
+    fetchMessages();
+  },[])
 
 
 
@@ -61,8 +118,12 @@ function page() {
             <div>
               <div className="flex items-center gap-2 text-lg font-semibold">
                 <Send className="h-5 w-5 text-cyan-300" />
-                <span>Your Public Link</span>
+                <span>Your Feedback Link</span>
+              
               </div>
+              <p className="mt-2 text-sm text-zinc-400">
+                Share it anywhere and start receiving anonymous messages.
+              </p>
               <p className="mt-3 break-all text-zinc-300">
                  {shareurl}
               </p>
@@ -99,41 +160,40 @@ function page() {
           <h2 className="text-xl font-semibold">Recent Messages</h2>
 
           <div className="mt-4 grid gap-4">
-            <article className="rounded-lg border border-white/10 bg-zinc-900 p-5">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-start gap-3">
-                  <MessageCircle className="mt-1 h-5 w-5 text-cyan-300" />
-                  <div>
-                    <p className="text-zinc-100">You&apos;re doing great!</p>
-                    <p className="mt-2 text-sm text-zinc-400">2 hours ago</p>
-                  </div>
-                </div>
+           {messages.length === 0 ? (
+  <div className="rounded-lg border border-white/10 bg-zinc-900 p-5 text-center text-zinc-400">
+    No messages yet.
+  </div>
+) : (
+  messages.map((message) => (
+    <article
+      key={message._id}
+      className="rounded-lg border border-white/10 bg-zinc-900 p-5"
+    >
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3">
+          <MessageCircle className="mt-1 h-5 w-5 text-cyan-300" />
 
-                <button className="inline-flex w-fit items-center gap-2 rounded-lg border border-red-400/30 px-3 py-2 text-sm font-medium text-red-200 transition hover:bg-red-500/10">
-                  <Trash2 className="h-4 w-4" />
-                  Delete
-                </button>
-              </div>
-            </article>
+          <div>
+            <p className="text-zinc-100">{message.content}</p>
 
-            <article className="rounded-lg border border-white/10 bg-zinc-900 p-5">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-start gap-3">
-                  <MessageCircle className="mt-1 h-5 w-5 text-cyan-300" />
-                  <div>
-                    <p className="text-zinc-100">
-                      Keep learning, you&apos;re improving.
-                    </p>
-                    <p className="mt-2 text-sm text-zinc-400">Yesterday</p>
-                  </div>
-                </div>
+            <p className="mt-2 text-sm text-zinc-400">
+              {new Date(message.createdAt).toLocaleString()}
+            </p>
+          </div>
+        </div>
 
-                <button className="inline-flex w-fit items-center gap-2 rounded-lg border border-red-400/30 px-3 py-2 text-sm font-medium text-red-200 transition hover:bg-red-500/10">
-                  <Trash2 className="h-4 w-4" />
-                  Delete
-                </button>
-              </div>
-            </article>
+        <button 
+        onClick={()=>handleDelete(message._id)}
+        disabled={deletingId === message._id}
+        className="inline-flex w-fit items-center gap-2 rounded-lg border border-red-400/30 px-3 py-2 text-sm font-medium text-red-200 transition hover:bg-red-500/10">
+          <Trash2 className="h-4 w-4" />
+          {deletingId === message._id ? "Deleting..." : "Delete"}
+        </button>
+      </div>
+    </article>
+  ))
+)}
           </div>
         </div>
       </section>

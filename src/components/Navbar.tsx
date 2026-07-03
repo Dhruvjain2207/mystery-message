@@ -3,6 +3,7 @@ import { LogOut, UserCircle } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import React from "react";
+import logo from '@/assets/logo.png'
 
 interface navbarProps{
   username:string
@@ -14,7 +15,7 @@ function Navbar({username}:navbarProps) {
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white">
             <Image
-              src="/globe.svg"
+              src={logo}
               alt="Mystery Message logo"
               width={24}
               height={24}

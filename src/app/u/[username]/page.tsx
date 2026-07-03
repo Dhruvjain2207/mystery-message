@@ -10,7 +10,9 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import axios from 'axios';
+import axios from 'axios'
+import Image from "next/image";
+import logo from '@/assets/logo.png'
 
 const suggestions = [
   'What is one thing you admire about me?',
@@ -35,6 +37,7 @@ export default function Page() {
   const maxLength = 500;
   const [loading,setLoading]=useState(true)
   const [userExist,setUserExist]=useState(false)
+ 
 
   const handleSendMessage=async()=>{
     
@@ -112,7 +115,12 @@ export default function Page() {
           className="pt-4 text-center sm:pt-8"
         >
           <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-400/10 text-cyan-300 shadow-lg shadow-cyan-950/30">
-            <MessageCircle className="h-7 w-7" aria-hidden="true" />
+            <Image
+              src={logo}
+              alt="Mystery Message logo"
+              width={24}
+              height={24}
+            />
           </div>
           <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
             Send an Anonymous Message to @{username}
@@ -220,6 +228,7 @@ export default function Page() {
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
             {suggestions.map((suggestion) => (
               <motion.button
+                onClick={()=>setMessage(suggestion)}
                 key={suggestion}
                 type="button"
                 whileHover={{ scale: 1.02 }}

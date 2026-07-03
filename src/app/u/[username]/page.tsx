@@ -31,9 +31,40 @@ export default function Page() {
   const params = useParams();
   const username = decodeURIComponent(params.username as string);
   const [message, setMessage] = useState('');
+  const [isSending, setIsSending] = useState(false);
   const maxLength = 500;
   const [loading,setLoading]=useState(true)
   const [userExist,setUserExist]=useState(false)
+
+  const handleSendMessage=async()=>{
+    
+    if(!message.trim()){
+      alert("message cannot be empty")
+      return
+    }
+    setIsSending(true)
+    try {
+        const response=await axios.post("/api/send-message",{
+      username,
+      anonymousMessage:message
+    });
+    alert(response.data.message)
+    setMessage("")
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+          alert(
+        error.response?.data?.message ?? "No message received"
+      );
+        }else{
+          console.error(error);
+          alert("something went wrong")
+        }
+    }
+    finally{
+      setIsSending(false)
+    }
+
+  }
 
   useEffect(()=>{
     const validateusername=async()=>{
@@ -131,6 +162,7 @@ export default function Page() {
 
           <div className="relative">
             <textarea
+            disabled={isSending}
               value={message}
               maxLength={maxLength}
               onChange={(event) => setMessage(event.target.value)}
@@ -144,13 +176,15 @@ export default function Page() {
           </div>
 
           <motion.button
+            onClick={handleSendMessage}
+            disabled={isSending}
             type="button"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.99 }}
             className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-cyan-500 px-5 py-3 text-sm font-semibold text-zinc-950 shadow-lg shadow-cyan-950/30 transition hover:from-cyan-300 hover:to-cyan-400"
           >
             <Send className="h-4 w-4" aria-hidden="true" />
-            Send Anonymous Message
+            {isSending ? "Sending..." : "Send Anonymous Message"}
           </motion.button>
         </motion.section>
 

@@ -3,19 +3,27 @@
 import Link from "next/link";
 import { motion } from "motion/react";
 import { ClipLoader } from "react-spinners";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function VerifyPage() {
-  const router=useRouter()
-  const searchParams=useSearchParams()
-  const email=searchParams.get("email")
-  const[otp,setOtp]=useState("")
-  const[loading,setLoading]=useState(false)
+  return (
+    <Suspense fallback={<VerifyPageLoading />}>
+      <VerifyForm />
+    </Suspense>
+  );
+}
+
+function VerifyForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
+  const [otp, setOtp] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleVerifyForm=async(e:React.FormEvent<HTMLFormElement>)=>{
-    e.preventDefault()
+    e.preventDefault();
     if (!email) {
   alert("Invalid verification link.");
   return;
@@ -139,6 +147,14 @@ export default function VerifyPage() {
           </div>
         </div>
       </motion.div>
+    </main>
+  );
+}
+
+function VerifyPageLoading() {
+  return (
+    <main className="min-h-screen bg-[#09090B] flex items-center justify-center px-6">
+      <ClipLoader size={24} color="#ffffff" speedMultiplier={0.9} />
     </main>
   );
 }

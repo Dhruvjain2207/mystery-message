@@ -1,36 +1,178 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mystery Message 💬
 
-## Getting Started
+An anonymous messaging platform where anyone can send honest feedback without revealing their identity.
 
-First, run the development server:
+🌐 Live Demo: https://mystery-message-sandy.vercel.app
+
+---
+
+## ✨ Features
+
+- 🔐 Secure Authentication
+- 📧 Email OTP Verification
+- 👤 Unique Public Profile (`/u/username`)
+- 💬 Anonymous Message Sending
+- 🤖 AI-Powered Message Suggestions
+- 📋 Copy Shareable Profile Link
+- 📤 Native Share Support (Mobile & Browser)
+- 📥 Dashboard to View Received Messages
+- 🗑️ Delete Messages
+- 🔄 Accept/Reject Incoming Messages
+- 📱 Fully Responsive Design
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+- Next.js 16 (App Router)
+- React
+- TypeScript
+- Tailwind CSS
+- Motion
+- Lucide React
+
+### Backend
+- Next.js API Routes
+- MongoDB
+- Mongoose
+- Auth.js (NextAuth v5)
+
+### Authentication
+- Credentials Authentication
+- Email OTP Verification
+- Secure Session Management
+
+### AI
+- Groq API
+- Llama Model
+
+### Email
+- Resend
+
+### Deployment
+- Vercel
+
+---
+
+## 📂 Project Structure
+
+```
+app/
+├── api/
+├── dashboard/
+├── login/
+├── register/
+├── verify/
+├── u/
+│   └── [username]/
+├── components/
+├── lib/
+├── model/
+└── helpers/
+```
+
+---
+
+## ⚙️ Environment Variables
+
+Create a `.env.local` file and add:
+
+```env
+MONGODB_URI=
+
+AUTH_SECRET=
+
+RESEND_API_KEY=
+
+EMAIL_FROM=
+
+GROQ_API_KEY=
+
+NEXT_PUBLIC_APP_URL=
+```
+
+---
+
+## 🚀 Installation
+
+Clone the repository
+
+```bash
+git clone https://github.com/Dhruvjain2207/mystery-message.git
+```
+
+Move into the project
+
+```bash
+cd mystery-message
+```
+
+Install dependencies
+
+```bash
+npm install
+```
+
+Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 📸 Screenshots
 
-To learn more about Next.js, take a look at the following resources:
+> Add screenshots here after deployment.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🔮 Future Improvements
 
-## Deploy on Vercel
+- Message Reactions
+- User Profile Customization
+- Dark/Light Theme
+- Image Attachments
+- Real-time Notifications
+- Analytics Dashboard
+- Message Search
+- Admin Panel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🤝 Contributing
+
+Contributions are welcome!
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push your branch
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 👨‍💻 Developer
+
+**Dhruv Jain**
+
+GitHub: https://github.com/Dhruvjain2207
+
+LinkedIn: *(Add your LinkedIn profile link here)*
+
+---
+
+⭐ If you found this project useful, don't forget to star the repository.

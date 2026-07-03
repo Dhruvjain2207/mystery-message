@@ -15,10 +15,12 @@ function page() {
 
 
   const session=useSession()
-  const shareurl=`http://localhost:3000/u/${session?.data?.user?.username}`
+  const shareurl = `${process.env.NEXT_PUBLIC_APP_URL}/u/${session?.data?.user?.username}`;
   const [copied,setCopied]=useState(false)
   const [shared,setShared]=useState(false)
   const [messages,setMessages]=useState<Message[]>([])
+  const [acceptingMessages, setAcceptingMessages] = useState(true)
+  const [updatingAcceptance, setUpdatingAcceptance] = useState(false)
   const [deleting,setDeleting]=useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -56,6 +58,7 @@ function page() {
       const response=await axios.get("/api/get-messages");
       if(response.data.success){
         setMessages(response.data.messages)
+        setAcceptingMessages(response.data.isAcceptingMessages)
       }
       
     } catch (error:any) {
@@ -64,8 +67,37 @@ function page() {
       
     }
   }
+
+  const handleAcceptingMessagesToggle = async () => {
+    const nextValue = !acceptingMessages;
+
+    try {
+      setUpdatingAcceptance(true);
+      setAcceptingMessages(nextValue);
+
+      const response = await axios.patch("/api/accept-messages", {
+        isAcceptingMessages: nextValue,
+      });
+
+      if (response.data.success) {
+        setAcceptingMessages(response.data.isAcceptingMessages);
+      }
+    } catch (error: any) {
+      setAcceptingMessages(!nextValue);
+      alert(
+        error.response?.data?.message ||
+          "Failed to update message acceptance"
+      );
+    } finally {
+      setUpdatingAcceptance(false);
+    }
+  }
   useEffect(()=>{
     fetchMessages();
+
+     const interval = setInterval(() => {
+    fetchMessages();
+  }, 5000);
   },[])
 
 
@@ -149,10 +181,23 @@ function page() {
         <div className="flex items-center justify-between rounded-lg border border-white/10 bg-zinc-900 p-5">
           <p className="font-medium text-zinc-100">Accept Anonymous Messages</p>
           <button
-            aria-label="Toggle anonymous messages"
-            className="flex h-7 w-12 items-center rounded-full bg-cyan-300 p-1 transition"
+            type="button"
+            role="switch"
+            aria-checked={acceptingMessages}
+            aria-label="Accept anonymous messages"
+            onClick={handleAcceptingMessagesToggle}
+            disabled={updatingAcceptance}
+            className={`relative inline-flex h-8 w-14 shrink-0 items-center rounded-full border p-1 transition duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-300/60 focus:ring-offset-2 focus:ring-offset-zinc-900 disabled:cursor-not-allowed disabled:opacity-70 ${
+              acceptingMessages
+                ? "border-cyan-200/60 bg-cyan-300"
+                : "border-white/10 bg-zinc-700"
+            }`}
           >
-            <span className="h-5 w-5 rounded-full bg-zinc-950 shadow-lg" />
+            <span
+              className={`h-6 w-6 rounded-full bg-white shadow-md shadow-black/30 transition duration-200 ${
+                acceptingMessages ? "translate-x-6" : "translate-x-0"
+              }`}
+            />
           </button>
         </div>
 

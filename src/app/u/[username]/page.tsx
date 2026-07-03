@@ -14,14 +14,7 @@ import axios from 'axios'
 import Image from "next/image";
 import logo from '@/assets/logo.png'
 
-const suggestions = [
-  'What is one thing you admire about me?',
-  "What's a strength I don't realize I have?",
-  'If you could give me one piece of advice, what would it be?',
-  "What's something I should improve?",
-  'Describe me in three words.',
-  'What first impression did I leave?',
-];
+
 
 const cardMotion = {
   initial: { opacity: 0, y: 18 },
@@ -37,7 +30,27 @@ export default function Page() {
   const maxLength = 500;
   const [loading,setLoading]=useState(true)
   const [userExist,setUserExist]=useState(false)
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
  
+  const generateSuggestions = async () => {
+  try {
+    setLoadingSuggestions(true);
+
+    const response = await axios.post("/api/suggest-messages");
+
+    setSuggestions(response.data.suggestions);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      alert(error.response?.data?.message ?? "Failed to generate suggestions");
+    } else {
+      alert("Something went wrong");
+    }
+  } finally {
+    setLoadingSuggestions(false);
+  }
+};
+
 
   const handleSendMessage=async()=>{
     
@@ -216,12 +229,14 @@ export default function Page() {
 
             <motion.button
               type="button"
+              onClick={generateSuggestions}
+              disabled={loadingSuggestions}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.99 }}
               className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-cyan-300/30 px-4 py-2.5 text-sm font-semibold text-cyan-200 transition hover:border-cyan-300/60 hover:bg-cyan-400/10 sm:w-auto"
             >
               <Sparkles className="h-4 w-4" aria-hidden="true" />
-              Generate Suggestions
+              {loadingSuggestions ? "Generating..." : "Generate Suggestions"}
             </motion.button>
           </div>
 

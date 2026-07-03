@@ -121,9 +121,10 @@ export default function VerifyPage() {
             <p className="text-center text-sm text-zinc-400">
               Didn't receive the verification code?
             </p>
+            <p className="text-center text-sm text-zinc-400"> Sometime there might be delay in otp delivering please wait 2-3 minutes before leaving</p>
 
             <p className="mt-1 text-center text-sm text-zinc-500">
-              Please try registering again to receive a new verification code.
+              if it takes more than 3 minutes then go back to register page and refresh before entering the details again
             </p>
           </div>
 

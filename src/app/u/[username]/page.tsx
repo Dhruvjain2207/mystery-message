@@ -136,7 +136,7 @@ export default function Page() {
             />
           </div>
           <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
-            Send an Anonymous Message to @{username}
+            Send an Anonymous Feedback to @{username}
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-zinc-400 sm:text-lg">
             Share your thoughts honestly. Your identity will remain completely

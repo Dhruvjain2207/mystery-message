@@ -128,25 +128,6 @@ http://localhost:3000
 
 ---
 
-## 📸 Screenshots
-
-> Add screenshots here after deployment.
-
----
-
-## 🔮 Future Improvements
-
-- Message Reactions
-- User Profile Customization
-- Dark/Light Theme
-- Image Attachments
-- Real-time Notifications
-- Analytics Dashboard
-- Message Search
-- Admin Panel
-
----
-
 ## 🤝 Contributing
 
 Contributions are welcome!

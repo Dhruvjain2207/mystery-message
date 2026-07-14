@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 interface User{
     username:string;
     email:string;
-    password:string;
+    password?:string;
 
     createdAt?:Date;
     updatedAt?:Date;
@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema<User>({
     },
     password:{
         type:String,
-        required:true,
+        
     },
     verifyCode:{
         type:String,

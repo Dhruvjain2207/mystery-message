@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials"
 import dbConnect from "./dbconnect";
 import bcrypt from "bcryptjs";
 import UserModel from "@/models/User";
+import Google from "next-auth/providers/google"
 
 
 
@@ -43,16 +44,61 @@ export const {handlers,signIn,signOut,auth}=NextAuth({
 
 
             }
+        }),
+        Google({
+            clientId:process.env.AUTH_GOOGLE_ID,
+            clientSecret:process.env.AUTH_GOOGLE_SECRET
         })
     ],
     callbacks:{
+
+       async signIn({user,account}){
+        if(account?.provider=="google"){
+            if(!user.email){
+                return false;
+            }
+
+            await dbConnect();
+            let dbuser=await UserModel.findOne({email:user.email})
+            const emailUsernameBase = (user.email.split("@")[0] || "user")
+                .replace(/[^a-zA-Z0-9]/g, "")
+                .toLowerCase() || "user";
+            const usernameBase = (user.name || emailUsernameBase)
+                .replace(/[^a-zA-Z0-9]/g, "")
+                .toLowerCase() || "user";
+
+            if(!dbuser){
+                dbuser=await UserModel.create({
+                    username: `${usernameBase}-${crypto.randomUUID().slice(0, 8)}`,
+                    email:user.email,
+                    isVerified:true,
+                    isAcceptingMessages:true,
+                })
+            } else if(
+                user.name &&
+                dbuser.username.startsWith(`${emailUsernameBase}-`)
+            ){
+                dbuser.username = `${usernameBase}-${crypto.randomUUID().slice(0, 8)}`;
+                await dbuser.save();
+            }
+
+        }
+        return true;
+       },
+
+
        async jwt({token,user}){
-        if(user){
-            token.id=user.id;
-            token.username=user.username;
-            token.email=user.email;
-            token.isAcceptingMessages=user.isAcceptingMessages;
-            token.isVerified=user.isVerified;
+        if(user?.email){
+            await dbConnect();
+            const dbuser=await UserModel.findOne({email:user.email})
+
+            if(dbuser){
+                token.id=dbuser._id.toString();
+                token.username=dbuser.username;
+                token.email=dbuser.email;
+                token.isAcceptingMessages=dbuser.isAcceptingMessages;
+                token.isVerified=dbuser.isVerified;
+            }
                
         }
         return token

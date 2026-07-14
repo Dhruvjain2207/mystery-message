@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { ClipLoader } from "react-spinners";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function RegisterPage() {
   const router=useRouter()
@@ -140,6 +141,34 @@ export default function RegisterPage() {
   ) : (
     "Create Account"
   )}
+            </motion.button>
+
+            <div className="flex items-center gap-3" aria-hidden="true">
+              <div className="h-px flex-1 bg-zinc-700" />
+              <span className="text-xs uppercase tracking-wider text-zinc-500">
+                or
+              </span>
+              <div className="h-px flex-1 bg-zinc-700" />
+            </div>
+
+            <motion.button
+              type="button"
+              onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex w-full items-center justify-center gap-3 rounded-xl border border-zinc-700 bg-zinc-950 py-3 font-semibold text-white transition hover:border-zinc-500 hover:bg-zinc-800"
+            >
+              <svg
+                aria-hidden="true"
+                className="h-5 w-5"
+                viewBox="0 0 24 24"
+              >
+                <path fill="#4285F4" d="M21.35 12.23c0-.71-.06-1.39-.18-2.05H12v3.88h5.24a4.48 4.48 0 0 1-1.94 2.94v2.51h3.14c1.84-1.69 2.91-4.18 2.91-7.28Z" />
+                <path fill="#34A853" d="M12 21.75c2.63 0 4.83-.87 6.44-2.35l-3.14-2.51c-.87.58-1.99.92-3.3.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.59A9.75 9.75 0 0 0 12 21.75Z" />
+                <path fill="#FBBC05" d="M6.54 13.78A5.87 5.87 0 0 1 6.23 12c0-.62.11-1.22.31-1.78V7.63H3.3A9.75 9.75 0 0 0 2.25 12c0 1.57.38 3.06 1.05 4.37l3.24-2.59Z" />
+                <path fill="#EA4335" d="M12 6.19c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.82 3.27 14.62 2.25 12 2.25a9.75 9.75 0 0 0-8.7 5.38l3.24 2.59C7.31 7.91 9.46 6.19 12 6.19Z" />
+              </svg>
+              Sign up with Google
             </motion.button>
           </form>
 

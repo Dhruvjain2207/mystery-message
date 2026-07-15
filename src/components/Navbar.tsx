@@ -4,11 +4,22 @@ import { signOut } from "next-auth/react";
 import Image from "next/image";
 import React from "react";
 import logo from '@/assets/logo.png'
+import axios from "axios";
 
 interface navbarProps{
   username:string
 }
 function Navbar({username}:navbarProps) {
+  const handleDelete= async()=>{
+    try{
+      const response=await axios.delete("/api/delete-account");
+      alert(response.data.message);
+      await signOut({ callbackUrl: "/login" });
+    }catch(error){
+      console.error("error in deleting account");
+    }
+
+  }
   return (
     <nav className="border-b border-white/10 bg-zinc-950/95 text-white">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -32,7 +43,16 @@ function Navbar({username}:navbarProps) {
             <span>Welcome {username}</span>
           </div>
 
+          <button
+            onClick={handleDelete}
+            type="button"
+            className="inline-flex items-center gap-2 rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm font-medium text-red-200 transition hover:bg-red-500/20"
+          >
+            Delete Account
+          </button>
+
           <button 
+          type="button"
           onClick={()=>signOut({callbackUrl:"/login"})}
           className="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-medium text-zinc-950 transition hover:bg-zinc-200">
             <LogOut className="h-4 w-4" />

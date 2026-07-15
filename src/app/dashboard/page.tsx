@@ -1,6 +1,5 @@
 'use client'
 import Navbar from "@/components/Navbar";
-import { auth } from "@/lib/auth";
 import axios from "axios";
 import { Copy, MessageCircle, Send, Trash2 } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -98,6 +97,8 @@ function page() {
      const interval = setInterval(() => {
     fetchMessages();
   }, 5000);
+
+    return () => clearInterval(interval);
   },[])
 
 

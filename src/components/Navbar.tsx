@@ -1,15 +1,17 @@
 'use client'
-import { LogOut, UserCircle } from "lucide-react";
+import { LogOut, Pencil, UserCircle } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import React from "react";
 import logo from '@/assets/logo.png'
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 interface navbarProps{
   username:string
 }
 function Navbar({username}:navbarProps) {
+  const router=useRouter()
   const handleDelete= async()=>{
     try{
       const response=await axios.delete("/api/delete-account");
@@ -42,6 +44,15 @@ function Navbar({username}:navbarProps) {
             <UserCircle className="h-4 w-4" />
             <span>Welcome {username}</span>
           </div>
+
+          <button
+          onClick={()=>router.push("/EditUsername")}
+            type="button"
+            className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-sm font-medium text-zinc-100 transition hover:bg-white/10"
+          >
+            <Pencil className="h-4 w-4" />
+            Edit username
+          </button>
 
           <button
             onClick={handleDelete}

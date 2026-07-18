@@ -87,7 +87,10 @@ export const {handlers,signIn,signOut,auth}=NextAuth({
        },
 
 
-       async jwt({token,user}){
+       async jwt({token,user,trigger,session}){
+        if (trigger === "update") {
+    token.username = session.username;
+  }
         if(user?.email){
             await dbConnect();
             const dbuser=await UserModel.findOne({email:user.email})
